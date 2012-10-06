@@ -1,0 +1,14 @@
+This is a small program, which is used to download wanted links from rss feeds.
+
+This is made to be a program to suite my personal needs, and is therefor quite limited.
+If someone thinks this looks like something they might benefit from, but find the feature
+set limited, please feel free to send me an enhancment request, or even a patch to add that
+specific feature.
+
+Even though this is written with my personal, quite small, use case in mind. I would be
+happy to accomodate other peoples needs for something like this, be that cookies, more
+sophisticated download paths or anything else you could think of.
+
+I have tried to write tests, that should explain the features of this program, but they are
+not complete. In the near future I will add more tests, and thereby documenting the features
+better. I will also add a config template to ease the use of this program.
