@@ -6,9 +6,16 @@ class ConfigReader:
   def __init__(self, reader):
     self.config = {}
     self.heads = []
-    self.read_all(reader)
     self.last_head = ''
+    self.read_all(reader)
 
+  def get_map(self):
+    return self.config
+
+  def get_sites(self):
+    return self.heads
+
+#private functions
   def read_all(self, reader):
     lines = reader.readlines()
     for line in lines:
@@ -18,7 +25,7 @@ class ConfigReader:
     if self.is_header(line):
       self.add_header(line)
     else:
-      self.add_line_as_key_value_pair(line)
+      self.add_line_as_key_value_pair (line)
 
   def is_header(self, line):
     result = self.get_header_name(line)
@@ -46,16 +53,12 @@ class ConfigReader:
       self.heads.append(header)
 
   def add_line_as_key_value_pair(self, line):
+    if line.strip () == '':
+      return
     key, value = self.split_and_strip_line(line)
     self.config[self.last_head][key] = value
 
   def split_and_strip_line(self, line):
-    splitted = line.split('=')
+    splitted = line.split(' = ')
     if len(splitted) == 2:
       return (splitted[0].strip(), splitted[1].strip())
-
-  def get_map(self):
-    return self.config
-
-  def get_sites(self):
-    return self.heads

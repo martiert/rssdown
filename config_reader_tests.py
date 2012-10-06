@@ -15,10 +15,11 @@ class StubFile:
       'sleep-time = 30',
       '[eztv]',
       'link = http://www.ezrss.it/feed',
+      '',
       'regex-true = ((chuck)|(dexter)|(supernatural))',
       'directory = /home/martin/.torrents',
       '[torrentz]',
-      'link = http://rss.torrentz.it/feed',
+      'link = http://rss.torrentz.it/feed?feed=direct&user=test',
       'regex-true = ((chuck)|(dexter))',
       'directory = /home/martin/.torrents']
 
@@ -35,7 +36,7 @@ class TestConfigReader (unittest.TestCase):
     self.read_config (StubFile ())
     self.assertEqual ('http://www.ezrss.it/feed', self.configMap['eztv']['link'])
     self.assertEqual ('((chuck)|(dexter)|(supernatural))', self.configMap['eztv']['regex-true'])
-    self.assertEqual ('http://rss.torrentz.it/feed', self.configMap['torrentz']['link'])
+    self.assertEqual ('http://rss.torrentz.it/feed?feed=direct&user=test', self.configMap['torrentz']['link'])
     self.assertEqual ('((chuck)|(dexter))', self.configMap['torrentz']['regex-true'])
 
   def test_site_list_has_correct_length (self):
