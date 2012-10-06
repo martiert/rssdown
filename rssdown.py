@@ -4,4 +4,4 @@ import downloader
 
 if __name__ == '__main__':
   download = downloader.Downloader ()
-  download.download_new_feeds ()
+  download.run_main_loop ()

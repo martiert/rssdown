@@ -5,8 +5,9 @@ import rssparser
 import verificator
 import urllib2
 import urlparse
+import ringbuffer
 
-import os
+import os, time, logging
 
 class Downloader:
   def __init__ (self):
@@ -15,6 +16,15 @@ class Downloader:
     self.sites = config.get_sites ()
     self.global_config = self.configs['global']
     self.downloads = []
+    self.setup_logging ()
+    self.already_downloaded = ringbuffer.RingBuffer ()
+
+  def run_main_loop (self):
+    timeout = int (self.global_config['scan-wait'])
+
+    while True:
+      self.download_new_feeds ()
+      time.sleep (timeout)
 
   def read_config (self):
     configfilename = os.path.join (os.getenv('HOME'), '.rssdown/config.txt')
@@ -23,16 +33,26 @@ class Downloader:
     file.close ()
     return config
 
+  def setup_logging (self):
+    logfile = 'downloads.log'
+    if self.global_config.has_key('logfile'):
+      logfile = self.global_config['logfile']
+    logfilename = os.path.join (os.getenv('HOME'), '.rssdown', logfile)
+
+    logging.basicConfig (filename=logfilename, level=logging.INFO)
+
   def download_new_feeds (self):
     for site in self.sites:
       self.download_links_from_site (self.configs[site])
 
   def download_links_from_site (self, config):
-    valid_links = self.get_valid_links (config)
+    (valid_links, valid_titles) = self.get_valid_links (config)
     download_dir = self.get_download_dir (config)
 
-    for link in valid_links:
-      self.download (link, download_dir)
+    for i in range (0, len (valid_links)):
+      logging.info ('Downloading %s' %valid_links[i])
+      self.already_downloaded.insert (valid_titles[i])
+      self.download (valid_links[i], download_dir)
 
   def get_valid_links (self, config):
     parser = rssparser.RssParser (config['link'])
@@ -69,13 +89,14 @@ class Downloader:
     if config.has_key ('regex-false'):
       reject = config['regex-false']
 
-    accepted_links = self.get_valid_links_from_valid_titles (titles, links, accept, reject)
-    return accepted_links
+    return self.get_valid_links_from_valid_titles (titles, links, accept, reject)
 
   def get_valid_links_from_valid_titles (self, titles, links, accept, reject):
     accepted_links = []
+    accepted_titles = []
     verifier = verificator.Verificator (accept, reject)
     for i in range (0, len (titles)):
-      if verifier.verify (titles[i]):
+      if verifier.verify (titles[i]) and not self.already_downloaded.contains (titles[i]):
         accepted_links.append (links[i])
-    return accepted_links
+        accepted_titles.append (titles[i])
+    return (accepted_links, accepted_titles)
