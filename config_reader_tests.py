@@ -48,5 +48,8 @@ class TestConfigReader (unittest.TestCase):
     self.assertEquals ('eztv', headers[0])
     self.assertEquals ('torrentz', headers[1])
 
+def suite ():
+  return unittest.TestLoader().loadTestsFromTestCase (TestConfigReader)
+
 if __name__ == '__main__':
-  unittest.main ()
+  unittest.TextTestRunner().run (suite ())

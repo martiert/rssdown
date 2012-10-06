@@ -2,33 +2,40 @@
 
 import re
 
-class verificator:
+class Verificator:
   def __init__ (self, accept, reject):
-    self._accept = re.compile (accept, re.I)
-
-    if reject:
-      self._reject = re.compile (reject, re.I)
-      self._has_rejects = True
-    else:
-      self._has_rejects = False
+    self.add_accepts (accept)
+    self.add_rejects (reject)
 
   def verify (self, title):
-    if self._accept.search (title):
-      if not self._has_rejects:
-        return True
-      elif not self._reject.search (title):
-        return True
+    if not self.do_accept_title (title):
+      return False
+    if self.do_reject_title (title):
+      return False
+
+    return True
+
+  def do_accept_title (self, title):
+    if self.has_accepts and self.accept.search (title):
+      return True
     return False
 
-if __name__ == "__main__":
-  verific = verificator ('(revolution)|(supernatural)', '')
-  assert (verific.verify ('Revolution 2012 1x2 [HDTV - LOL]'))
-  assert (verific.verify ('Supernatural 2012'))
-  assert (not verific.verify ('smallwille'))
+  def do_reject_title (self, title):
+    if self.has_rejects and self.reject.search (title):
+      return True
+    return False
 
-  verific = verificator ('(revolution)|(supernatural)', '(x264)|(720p)')
-  assert (verific.verify ('Revolution 2012 1x2 [HDTV - LOL]'))
-  assert (not verific.verify ('Revolution 2012 [x264]'))
-  assert (not verific.verify ('Revolution 2012 720p'))
+  def add_accepts (self, accepts):
+    if accepts:
+      self.accept = re.compile (accepts, re.I)
+      self.has_accepts = True
+    else:
+      self.has_accepts = False
 
-  print "All tests succeeded"
+  def add_rejects (self, rejects):
+    if rejects:
+      self.reject = re.compile (rejects, re.I)
+      self.has_rejects = True
+    else:
+      self.has_rejects = False
+
