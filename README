@@ -11,4 +11,38 @@ sophisticated download paths or anything else you could think of.
 
 I have tried to write tests, that should explain the features of this program, but they are
 not complete. In the near future I will add more tests, and thereby documenting the features
-better. I will also add a config template to ease the use of this program.
+better.
+
+
+Configuration File:
+
+The config_template.txt file is a template file to show the syntax of the config file needed.
+It should be called config.txt, and be put in ~/.rssdown/config.txt to be found properly.
+
+The [global] section is the global section, which gives us some configurations for all of the
+feeds. download-dir tells us where we wish to download what comes out of the rss feed. It has
+to be a full path, and is required
+
+logfile tells us the name of the logfile, and puts it in ~/.rssdown. If not provided it is set
+to downloads.log
+
+loglevel is used to set the loglevel, but is not used right now. Right now we set loglevel INFO,
+which gives quite a lot of output.
+
+scan-wait is the number of seconds we wish to wait between each time we read and rss feed. This
+field is currently required.
+
+Each of the other sections is configurations specific for a feedsite.
+
+link is the url for the specific rss feed.
+
+regex-true is a regex which tells us what we want. The regex-true for feedsite will accept titles
+'Some Accepted Download' and 'Some Other Accepted Download'. It is case insensitive, and \s is used
+to represent spaces. The field is not required, but it doen't really make sense to not have it, as
+we won't download anything in that case.
+
+regex-false specifies rejected regexes. If 'Some Accepted Download Lets Ignore This' is a tested title,
+it will not be downloaded as the regex-false overrides the regex-true section, and Ignore is part of
+the title. This field is not required, and if it doesn't exist we will accept everything regex-true matches.
+
+We can also override the download-dir on a per. feed basis usign the optional download-dir

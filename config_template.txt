@@ -1,0 +1,18 @@
+[global]
+download-dir    = ~/DownloadDir
+logfile         = rssdown.log
+loglevel        = 2
+scan-wait       = 3600
+
+[feedsite]
+link            = http://www.somepage.com/rss_feed
+
+regex-true      = ((some\saccepted\sdownload)|(some\sother\saccepted\sdownload))
+regex-false     = (ignore)
+
+[otherfeedsite]
+link            = http://www.someotherpage.com/rss_feed
+
+regex-true      = ((some\saccepted\sdownload)|(some\sother\saccepted\sdownload))
+
+download-dir    = ~/SomeOtherDownloadDir
