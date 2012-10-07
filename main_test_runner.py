@@ -4,9 +4,11 @@ import unittest
 
 import verificator_tests
 import config_reader_tests
+import ringbuffer_tests
 
 tests = [verificator_tests.suite (),
-        config_reader_tests.suite ()]
+        config_reader_tests.suite (),
+        ringbuffer_tests.suite ()]
 
 
 if __name__ == '__main__':
