@@ -17,3 +17,6 @@ class RingBuffer:
       if test == data:
         return True
     return False
+
+  def get_data (self):
+    return self.data

@@ -21,10 +21,15 @@ class Downloader:
 
   def run_main_loop (self):
     timeout = int (self.global_config['scan-wait'])
+    self.load_ringbuffer ()
 
-    while True:
-      self.download_new_feeds ()
-      time.sleep (timeout)
+    try:
+      while True:
+        self.download_new_feeds ()
+        time.sleep (timeout)
+    except KeyboardInterrupt as interupt:
+      print "Interrupted"
+      self.save_ringbuffer ()
 
   def read_config (self):
     configfilename = os.path.join (os.getenv('HOME'), '.rssdown/config.txt')
@@ -32,6 +37,26 @@ class Downloader:
     config = config_reader.ConfigReader (file)
     file.close ()
     return config
+
+  def load_ringbuffer (self):
+    saved_data_name = os.path.join (os.getenv ('HOME'), '.rssdown/downloaded.data')
+    if not os.path.exists (saved_data_name):
+      return
+
+    writer = open (saved_data_name, 'r')
+    for line in writer.readlines ():
+      self.already_downloaded.insert (line)
+    writer.close ()
+
+  def save_ringbuffer (self):
+    saved_data_name = os.path.join (os.getenv ('HOME'), '.rssdown/downloaded.data')
+    writer = open (saved_data_name, 'w')
+
+    for data in self.already_downloaded.get_data ():
+      if not data == None:
+        output = '%s\n' %data
+        writer.write (output)
+    writer.close ()
 
   def setup_logging (self):
     logfile = 'downloads.log'

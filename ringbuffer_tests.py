@@ -32,6 +32,15 @@ class RingBufferTests (unittest.TestCase):
     self.__add_times_number_of_test_strings (3)
     self.assertFalse (self.buffer.contains ('test1'))
 
+  def test_getting_ringbuffer_data_contains_all_added_strings (self):
+    self.buffer = ringbuffer.RingBuffer (5)
+    self.__add_times_number_of_test_strings (4)
+    data = self.buffer.get_data ()
+    for i in range (0,4):
+      name = 'test%d' %(i+1)
+      self.assertEqual (name, data[i])
+    self.assertEqual (None, data[4])
+
 def suite ():
   return unittest.TestLoader().loadTestsFromTestCase (RingBufferTests)
 
