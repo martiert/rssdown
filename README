@@ -46,3 +46,8 @@ it will not be downloaded as the regex-false overrides the regex-true section, a
 the title. This field is not required, and if it doesn't exist we will accept everything regex-true matches.
 
 We can also override the download-dir on a per. feed basis usign the optional download-dir
+
+TODO:
+
+- Refactor the download.py file. It has grown way out of proportion.
+- Add more tests.
