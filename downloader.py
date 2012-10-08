@@ -7,7 +7,7 @@ import urllib2
 import urlparse
 import ringbuffer
 
-import os, time, logging
+import os, time, logging, shutil, re, lxml.html
 
 class Downloader:
   def __init__ (self):
@@ -75,9 +75,9 @@ class Downloader:
     download_dir = self.get_download_dir (config)
 
     for i in range (0, len (valid_links)):
-      logging.info ('Downloading %s' %valid_links[i])
+      logging.info ('Downloading %s' %valid_titles[i])
       self.already_downloaded.insert (valid_titles[i])
-      self.download (valid_links[i], download_dir)
+      self.download (valid_links[i], valid_titles[i], download_dir)
 
   def get_valid_links (self, config):
     parser = rssparser.RssParser (config['link'])
@@ -90,21 +90,31 @@ class Downloader:
       download_dir = config['download-dir']
     return download_dir
 
-  def download (self, link, directory):
-    filename = self.make_filename_from_link_and_directory (link, directory)
-    urlfile = urllib2.urlopen (link)
+  def download (self, link, title, directory):
+    filename = os.path.join (directory, title)
+    urlfile = self.get_url_from_link (link)
     localfile = open (filename, 'w')
-    localfile.write (urlfile.read ())
+    shutil.copyfileobj (urlfile, localfile)
     urlfile.close ()
     localfile.close ()
 
-  def make_filename_from_link_and_directory (self, link, directory):
-    filename = urlparse.urlsplit (link)[2].split('/')[-1].split('#')[0].split('?')[0]
-    urllib = urllib2.urlopen (link)
-    if urllib.info ().has_key('Content-Disposition'):
-      filename = urllib.info()['Content-Disposition'].split('filename=')[1]
-    urllib.close ()
-    return os.path.join (directory, filename)
+  def get_url_from_link (self, link):
+    headers = {
+        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:2.0.1) Gecko/2010010'
+        '1 Firefox/4.0.1',
+        'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language':'en-us,en;q=0.5',
+        'Accept-Charset':'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}
+    req = link
+    if not re.search (link, r'torrent$'):
+      req = urllib2.Request (link, None, headers)
+      return urllib2.urlopen (req)
+      page = f.read ()
+      f.close ()
+      tree = lxml.html.fromstring (page)
+      req = urllib2.Request (tree, None, headers)
+      return urllib2.urlopen (req)
+    return urllib2.urlopen (req)
 
   def validate_titles_and_return_their_links (self, config, titles, links):
     accept = ''
