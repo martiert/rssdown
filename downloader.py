@@ -99,21 +99,18 @@ class Downloader:
     localfile.close ()
 
   def get_url_from_link (self, link):
+    if not re.search (link, r'torrent$'):
+      return self.get_url_from_header (link)
+    return urllib2.urlopen (link)
+
+  def get_url_from_header (self, link):
     headers = {
         'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:2.0.1) Gecko/2010010'
         '1 Firefox/4.0.1',
         'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language':'en-us,en;q=0.5',
         'Accept-Charset':'ISO-8859-1,utf-8;q=0.7,*;q=0.7'}
-    req = link
-    if not re.search (link, r'torrent$'):
-      req = urllib2.Request (link, None, headers)
-      return urllib2.urlopen (req)
-      page = f.read ()
-      f.close ()
-      tree = lxml.html.fromstring (page)
-      req = urllib2.Request (tree, None, headers)
-      return urllib2.urlopen (req)
+    req = urllib2.Request (link, None, headers)
     return urllib2.urlopen (req)
 
   def validate_titles_and_return_their_links (self, config, titles, links):
